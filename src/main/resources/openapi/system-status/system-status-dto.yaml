@@ -1,0 +1,19 @@
+SystemStatusApiResponseDto:
+  type: object
+  required:
+    - applicationName
+    - status
+    - timestamp
+  properties:
+    applicationName:
+      type: string
+      description: Spring application name.
+      example: theproject
+    status:
+      type: string
+      description: Current health-style status of the application.
+      example: UP
+    timestamp:
+      type: string
+      format: date-time
+      description: Timestamp when the payload was generated.

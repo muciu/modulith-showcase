@@ -1,0 +1,35 @@
+get:
+  tags:
+    - System
+  operationId: getSystemStatus
+  summary: Read current system status
+  description: Returns a lightweight status payload for the application.
+  parameters:
+    - name: type
+      in: query
+      description: Could be used to force the 'error' status
+      schema:
+        type: string
+        enum:
+          - not_found
+          - internal
+          - validation
+  responses:
+    '400':
+      description: When a client request related error occurs
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '500':
+      description: When an unexpected error occurs
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '200':
+      description: Current application status
+      content:
+        application/json:
+          schema:
+            $ref: "./system-status/system-status-dto.yaml#/SystemStatusApiResponseDto"

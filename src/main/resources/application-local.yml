@@ -1,0 +1,5 @@
+theproject:
+  clients:
+    mailsender:
+      url: https://reqres.in/api/collections/send-email/records?project_id=23618
+      apiKey: pub_

@@ -1,0 +1,31 @@
+post:
+  tags:
+    - UserRegistration
+  operationId: registerUser
+  summary: Register new user
+  description: Returns status of the registration process
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "./user-registration/request-dto.yaml#/UserRegistrationApiRequestDto"
+  responses:
+    '400':
+      description: When a client request related error occurs
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '500':
+      description: When an unexpected error occurs
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '200':
+      description: Registration status
+      content:
+        application/json:
+          schema:
+            $ref: "./user-registration/response-dto.yaml#/UserRegistrationApiResponseDto"

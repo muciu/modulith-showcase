@@ -1,0 +1,12 @@
+openapi: 3.0.3
+info:
+  title: The Project API
+  version: 1.0.0
+  description: Spec-first REST API for theproject.
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/v1/system/status:
+    $ref: "./openapi/system-status.api.yaml"
+  /api/v1/user-registration:
+    $ref: "./openapi/user-registration.api.yaml"

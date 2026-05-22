@@ -1,0 +1,29 @@
+---
+server:
+  port: 8081
+
+spring:
+  modulith:
+    events:
+      jdbc:
+        schema-initialization:
+          enabled: true
+  application:
+    name: theproject
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+theproject:
+  clients:
+    mailsender:
+      # Purposely set to fake to avoid case when test environment we call the external service
+      url: https://example.invalid.localhost
+      apiKey: change-me
+      apiKeyHeaderName: x-api-key
+      requestTimeout: 5s
+      readTimeout: 10s
+      connectionTimeout: 5s

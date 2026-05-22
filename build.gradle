@@ -1,0 +1,127 @@
+plugins {
+	id 'java'
+	id 'org.openapi.generator' version '7.19.0'
+	id 'org.springframework.boot' version '4.0.6'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.muciociosan'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springModulithVersion', "2.0.6")
+	set('jMoleculesBomVersion', "2025.0.2")
+	set('lombokVersion', "1.18.46")
+	set('wiremockVersion', "3.10.0")
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-restclient'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-liquibase'
+	implementation 'org.liquibase:liquibase-core'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
+	implementation 'org.springframework.modulith:spring-modulith-starter-core'
+	implementation 'org.springframework.modulith:spring-modulith-starter-jpa'
+	implementation 'org.jmolecules:jmolecules-ddd'
+	implementation 'org.jmolecules.integrations:jmolecules-spring'
+	implementation 'org.jmolecules.integrations:jmolecules-jpa'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'org.springframework.modulith:spring-modulith-actuator'
+	runtimeOnly 'org.springframework.modulith:spring-modulith-observability'
+	testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jdbc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-restclient-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
+	testImplementation 'org.jmolecules.integrations:jmolecules-archunit'
+	testImplementation "org.wiremock:wiremock-standalone:$wiremockVersion"
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// lombok below
+	compileOnly("org.projectlombok:lombok:$lombokVersion")
+	annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+	testCompileOnly("org.projectlombok:lombok:$lombokVersion")
+	testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.jmolecules:jmolecules-bom:${jMoleculesBomVersion}"
+		mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}"
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDir layout.buildDirectory.dir('generated/sources/openapi/src/main/java')
+		}
+	}
+}
+
+openApiGenerate {
+	generatorName.set('spring')
+	inputSpec.set("$projectDir/src/main/resources/openapi.yaml")
+	outputDir.set(layout.buildDirectory.dir('generated/sources/openapi').get().asFile.absolutePath)
+	apiPackage.set('com.muciociosan.theproject.openapi.generated')
+	modelPackage.set('com.muciociosan.theproject.openapi.generated.model')
+	invokerPackage.set('com.muciociosan.theproject.openapi.generated.invoker')
+	validateSpec.set(true)
+	generateApiTests.set(false)
+	generateModelTests.set(false)
+	generateApiDocumentation.set(false)
+	generateModelDocumentation.set(false)
+	configOptions.set([
+		dateLibrary            : 'java8',
+		documentationProvider  : 'springdoc',
+		hideGenerationTimestamp: 'true',
+		interfaceOnly          : 'true',
+		library                : 'spring-boot',
+		openApiNullable        : 'false',
+		performBeanValidation  : 'true',
+		requestMappingMode     : 'api_interface',
+		sourceFolder           : 'src/main/java',
+		useJakartaEe           : 'true',
+		useResponseEntity      : 'true',
+		useSpringBoot4         : 'true',
+		useSpringController    : 'true',
+		useTags                : 'true'
+	])
+}
+
+tasks.named('openApiGenerate') {
+	dependsOn tasks.named('openApiValidate')
+	doFirst {
+		delete layout.buildDirectory.dir('generated/sources/openapi')
+	}
+}
+
+tasks.named('openApiValidate') {
+	inputSpec.set("$projectDir/src/main/resources/openapi.yaml")
+}
+
+tasks.named('compileJava') {
+	dependsOn tasks.named('openApiGenerate')
+}
+
+tasks.named('test') {
+	dependsOn tasks.named('openApiGenerate')
+	useJUnitPlatform()
+}
