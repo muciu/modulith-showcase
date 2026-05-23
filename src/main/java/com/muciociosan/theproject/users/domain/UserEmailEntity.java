@@ -2,8 +2,8 @@ package com.muciociosan.theproject.users.domain;
 
 
 import com.muciociosan.theproject.shared.exceptions.ValidationException;
-import com.muciociosan.theproject.users.domain.view.UserEmailView;
 import com.muciociosan.theproject.users.usecases.EmailValue;
+import com.muciociosan.theproject.users.view.UserEmailView;
 import jakarta.persistence.*;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;

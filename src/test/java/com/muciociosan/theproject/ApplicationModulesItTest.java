@@ -29,6 +29,7 @@ class ApplicationModulesItTest {
         noClasses()
             .that().resideOutsideOfPackages("com.muciociosan.theproject.applicationlogic..rest", "com.muciociosan.theproject.openapi.generated..")
             .and().doNotHaveFullyQualifiedName("com.muciociosan.theproject.infrastructure.ApplicationStatusController")
+            .and().doNotHaveFullyQualifiedName("com.muciociosan.theproject.infrastructure.FakeMailSenderController")
             .and().doNotHaveFullyQualifiedName("com.muciociosan.theproject.infrastructure.GlobalExceptionHandler")
             .should().dependOnClassesThat().resideInAnyPackage("com.muciociosan.theproject.openapi..")
             .check(importedClasses);

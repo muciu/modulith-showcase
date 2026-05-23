@@ -1,8 +1,8 @@
-package com.muciociosan.theproject.applicationlogic.userupdate;
+package com.muciociosan.theproject.applicationlogic.userscrud;
 
 import com.muciociosan.theproject.shared.ids.UserId;
-import com.muciociosan.theproject.users.usecases.EmailValue;
 import com.muciociosan.theproject.users.usecases.EmailUpdateUseCase;
+import com.muciociosan.theproject.users.usecases.EmailValue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

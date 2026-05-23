@@ -1,4 +1,4 @@
-package com.muciociosan.theproject.users.domain.view;
+package com.muciociosan.theproject.users.view;
 
 import com.muciociosan.theproject.users.usecases.EmailValue;
 

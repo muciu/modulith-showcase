@@ -1,12 +1,12 @@
-package com.muciociosan.theproject.applicationlogic.userupdate.rest;
+package com.muciociosan.theproject.applicationlogic.userscrud.rest;
 
-import com.muciociosan.theproject.applicationlogic.userupdate.UserUpdateLogic;
+import com.muciociosan.theproject.applicationlogic.userscrud.UserUpdateLogic;
 import com.muciociosan.theproject.openapi.generated.UsersApi;
 import com.muciociosan.theproject.openapi.generated.model.GetUser200Response;
 import com.muciociosan.theproject.openapi.generated.model.UserUpdateApiRequestDto;
 import com.muciociosan.theproject.shared.ids.UserId;
-import com.muciociosan.theproject.users.domain.view.UserView;
 import com.muciociosan.theproject.users.usecases.UserLookupUseCase;
+import com.muciociosan.theproject.users.view.UserView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;

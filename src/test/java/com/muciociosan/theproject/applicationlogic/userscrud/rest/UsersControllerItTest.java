@@ -1,4 +1,4 @@
-package com.muciociosan.theproject.applicationlogic.userupdate.rest;
+package com.muciociosan.theproject.applicationlogic.userscrud.rest;
 
 import com.muciociosan.theproject.users.usecases.UserCreationUseCase;
 import org.junit.jupiter.api.DisplayName;

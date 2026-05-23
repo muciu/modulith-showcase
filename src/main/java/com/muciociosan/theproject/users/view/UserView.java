@@ -1,4 +1,4 @@
-package com.muciociosan.theproject.users.domain.view;
+package com.muciociosan.theproject.users.view;
 
 import java.time.Instant;
 

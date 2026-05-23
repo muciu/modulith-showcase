@@ -4,7 +4,7 @@ import com.muciociosan.theproject.shared.ids.UserId;
 import com.muciociosan.theproject.users.domain.UserAggregate;
 import com.muciociosan.theproject.users.domain.UserAggregateRepository;
 import com.muciociosan.theproject.users.domain.UsernameValue;
-import com.muciociosan.theproject.users.domain.view.UserView;
+import com.muciociosan.theproject.users.view.UserView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

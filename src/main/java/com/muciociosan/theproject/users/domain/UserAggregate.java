@@ -2,8 +2,8 @@ package com.muciociosan.theproject.users.domain;
 
 import com.muciociosan.theproject.shared.exceptions.InvalidStateException;
 import com.muciociosan.theproject.shared.ids.UserId;
-import com.muciociosan.theproject.users.domain.view.UserView;
 import com.muciociosan.theproject.users.usecases.EmailValue;
+import com.muciociosan.theproject.users.view.UserView;
 import jakarta.persistence.*;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Identity;
