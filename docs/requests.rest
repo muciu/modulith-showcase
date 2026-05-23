@@ -1,3 +1,4 @@
+@userId = 11111111-1111-1111-1111-111111111111
 ###
 GET http://localhost:8081/api/v1/system/status
 
@@ -7,6 +8,30 @@ POST http://localhost:8081/api/v1/user-registration
 Content-Type: application/json
 
 {
-  "email": "lukasz@example.com",
-  "username": "lukaszko"
+  "email": "lukaszs@example.com",
+  "username": "lukaszkos"
+}
+
+###
+PUT http://localhost:8081/api/v1/users/{{userId}}
+Content-Type: application/json
+
+{
+  "email": "updated@example.com"
+}
+
+
+###
+GET http://localhost:8081/api/v1/users/{{userId}}
+
+
+###
+POST http://localhost:8081/fake/mail-sender
+Content-Type: application/json
+
+{
+  "from": "sdf@ge.com",
+  "title": "title",
+  "to": "sdf@ge.com",
+  "content": "sdf@ge.com"
 }

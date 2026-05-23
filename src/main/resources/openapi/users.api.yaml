@@ -1,0 +1,90 @@
+put:
+  tags:
+    - Users
+  operationId: updateUser
+  summary: Update user email
+  description: Adds a new email address for an existing user
+  parameters:
+    - name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: "./users/request-dto.yaml#/UserUpdateApiRequestDto"
+  responses:
+    '400':
+      description: When a client request related error occurs
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '404':
+      description: When the target user does not exist
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '500':
+      description: When an unexpected error occurs
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '204':
+      description: User email updated
+get:
+  tags:
+    - Users
+  operationId: getUser
+  summary: Get user
+  description: Reads existing user
+  parameters:
+    - name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    '400':
+      description: When a client request related error occurs
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '404':
+      description: When the target user does not exist
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '500':
+      description: When an unexpected error occurs
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '200':
+      description: User email updated
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - username
+              - email
+              - emailVerified
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+              emailVerified:
+                type: boolean
+

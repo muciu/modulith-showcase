@@ -1,0 +1,48 @@
+post:
+  tags:
+    - FakeMailSender
+  operationId: sendEmail
+  summary: Fake api to send emails
+  description: Fake mail sending api
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - from
+            - to
+            - content
+            - title
+          properties:
+            from:
+              type: string
+            to:
+              type: string
+            content:
+              type: string
+            title:
+              type: string
+  responses:
+    '400':
+      description: When a client request related error occurs
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '500':
+      description: When an unexpected error occurs
+      content:
+        application/json:
+          schema:
+            $ref: "./common/error-response.yaml#/ErrorApiResponseDto"
+    '200':
+      description: Current application status
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string

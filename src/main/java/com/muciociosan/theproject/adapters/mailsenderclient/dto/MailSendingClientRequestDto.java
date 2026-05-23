@@ -5,12 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record MailSendingClientRequestDto(
-    @JsonProperty("data") MailSendingDataClientDto data
+    @JsonProperty("from") String from,
+    @JsonProperty("to") String to,
+    @JsonProperty("title") String title,
+    @JsonProperty("content") String content
 ) {
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public record MailSendingDataClientDto(
-        @JsonProperty("key") String key
-    ) {
-    }
 }

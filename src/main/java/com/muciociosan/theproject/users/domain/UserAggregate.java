@@ -81,18 +81,29 @@ public class UserAggregate {
      * Exposes publicly (outside module) available view of the aggregate
      */
     public UserView view() {
-        final var currentEmail = this.emails.stream().filter(UserEmailEntity::current).findFirst();
-        final var emailToReturn = currentEmail.or(() -> this.emails.stream().min(comparing(UserEmailEntity::createdAt)))
-                .map(UserEmailEntity::view)
-                .orElseThrow();
+        final var emailToReturn = currentEmail().view();
         return new UserView(username().value(), emailToReturn, createdAt(), updatedAt());
     }
 
     public void updateEmail(final EmailValue newEmail) {
+        if (currentEmail().email().equals(newEmail)) {
+            return;
+        }
         this.emails.add(UserEmailEntity.newFrom(newEmail));
+        this.pendingEvents.add(new UserEmailAdded(id(), newEmail.value()));
     }
 
-    public void verificationStarted(final EmailValue emailValue) {
+    /**
+     * Current email is the one that is marked as 'current' (means verified) or most recently added and NOT verified
+     * There is DB constraint that prevent multiple current emails per one user_id (uk_user_emails_current_per_user)
+     */
+    private UserEmailEntity currentEmail() {
+        final var currentEmail = this.emails.stream().filter(UserEmailEntity::current).findFirst();
+        return currentEmail.or(() -> this.emails.stream().min(comparing(UserEmailEntity::createdAt)))
+                .orElseThrow();
+    }
+
+    public void emailVerificationStarted(final EmailValue emailValue) {
         this.emails.stream()
                 .filter(email -> email.email().equals(emailValue))
                 .peek(UserEmailEntity::verificationStarted).findFirst()
@@ -104,7 +115,7 @@ public class UserAggregate {
                 .filter(email -> email.email().equals(emailValue))
                 .filter(email -> email.verificationStatus() == VERIFICATION_STARTED)
                 .findFirst().orElseThrow(() -> new InvalidStateException("No email to verify"));
-        toMark.markVerified();
+        toMark.markVerified();// this should fail because we have constraint
     }
 
     // ------ INTERNAL methods goes below

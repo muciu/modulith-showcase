@@ -10,3 +10,7 @@ paths:
     $ref: "./openapi/system-status.api.yaml"
   /api/v1/user-registration:
     $ref: "./openapi/user-registration.api.yaml"
+  /api/v1/users/{userId}:
+    $ref: "./openapi/users.api.yaml"
+  /fake/mail-sender:
+    $ref: "./openapi/fake-mail-sender.api.yaml"

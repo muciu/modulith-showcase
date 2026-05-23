@@ -16,7 +16,7 @@ public class EmailVerificationUseCase {
     @Transactional
     public void markVerificationStarted(final UserId userId, final EmailValue newEmail) {
         final var user = userRepository.getBy(userId);
-        user.verificationStarted(newEmail);
+        user.emailVerificationStarted(newEmail);
         final var events = userRepository.save(user);
         eventsPublisher.publishFrom(events);
     }

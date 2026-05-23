@@ -77,7 +77,7 @@ class UserAggregateTest {
             final var aggregate = UserAggregate.newFrom(UsernameValue.from("user-" + UUID.randomUUID()), email);
 
             // when
-            aggregate.verificationStarted(EmailValue.from(email));
+            aggregate.emailVerificationStarted(EmailValue.from(email));
 
             // then
             assertThat(emailEntityFor(aggregate, email).verificationStatus())
@@ -94,7 +94,7 @@ class UserAggregateTest {
             );
             final var updatedEmail = "updated-" + UUID.randomUUID() + "@example.com";
             aggregate.updateEmail(EmailValue.from(updatedEmail));
-            aggregate.verificationStarted(EmailValue.from(updatedEmail));
+            aggregate.emailVerificationStarted(EmailValue.from(updatedEmail));
 
             // when
             aggregate.markEmailVerified(EmailValue.from(updatedEmail));
@@ -122,7 +122,7 @@ class UserAggregateTest {
             final var missingEmail = EmailValue.from("missing-" + UUID.randomUUID() + "@example.com");
 
             // when / then
-            assertThatThrownBy(() -> aggregate.verificationStarted(missingEmail))
+            assertThatThrownBy(() -> aggregate.emailVerificationStarted(missingEmail))
                     .isInstanceOf(InvalidStateException.class)
                     .hasMessage("No email to verify");
         }

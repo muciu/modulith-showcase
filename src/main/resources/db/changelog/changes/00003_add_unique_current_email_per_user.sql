@@ -1,0 +1,17 @@
+-- liquibase formatted sql
+
+-- changeset lwojcik:00004-add-unique-current-email-per-user
+-- preconditions onFail:MARK_RAN onError:HALT
+-- precondition-sql-check expectedResult:1 SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE UPPER(TABLE_SCHEMA) = 'PUBLIC' AND UPPER(TABLE_NAME) = 'USER_EMAILS'
+-- precondition-sql-check expectedResult:1 SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE UPPER(TABLE_SCHEMA) = 'PUBLIC' AND UPPER(TABLE_NAME) = 'USER_EMAILS' AND UPPER(COLUMN_NAME) = 'IS_CURRENT'
+-- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE UPPER(TABLE_SCHEMA) = 'PUBLIC' AND UPPER(TABLE_NAME) = 'USER_EMAILS' AND UPPER(COLUMN_NAME) = 'CURRENT_USER_ID'
+ALTER TABLE user_emails
+    ADD COLUMN current_user_id UUID GENERATED ALWAYS AS (CASE WHEN is_current THEN user_id ELSE NULL END);
+
+-- changeset lwojcik:00005-add-unique-constraint-for-current-user-email
+-- preconditions onFail:MARK_RAN onError:HALT
+-- precondition-sql-check expectedResult:1 SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE UPPER(TABLE_SCHEMA) = 'PUBLIC' AND UPPER(TABLE_NAME) = 'USER_EMAILS'
+-- precondition-sql-check expectedResult:1 SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE UPPER(TABLE_SCHEMA) = 'PUBLIC' AND UPPER(TABLE_NAME) = 'USER_EMAILS' AND UPPER(COLUMN_NAME) = 'CURRENT_USER_ID'
+-- precondition-sql-check expectedResult:0 SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE UPPER(TABLE_SCHEMA) = 'PUBLIC' AND UPPER(TABLE_NAME) = 'USER_EMAILS' AND UPPER(CONSTRAINT_NAME) = 'UK_USER_EMAILS_CURRENT_PER_USER'
+ALTER TABLE user_emails
+    ADD CONSTRAINT uk_user_emails_current_per_user UNIQUE (current_user_id);

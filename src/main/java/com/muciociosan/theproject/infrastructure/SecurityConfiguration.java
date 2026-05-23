@@ -18,6 +18,7 @@ class SecurityConfiguration {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(
                     "/api/**",
+                        "/fake/**",
                         "/swagger-ui.html",
                     "/swagger-ui/**",
                         "/v3/api-docs",

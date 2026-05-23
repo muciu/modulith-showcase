@@ -2,11 +2,10 @@ package com.muciociosan.theproject.users.mailsenderclient;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.muciociosan.theproject.adapters.mailsenderclient.MailSenderRestClient;
+import com.muciociosan.theproject.adapters.mailsenderclient.dto.MailSendingClientRequestDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
@@ -50,25 +49,13 @@ class MailSenderRestClientItTest {
     void shouldFetchUserDataFromExternalService() {
         // given
         wireMockServer.stubFor(
-            get(urlEqualTo("/api/collections/send-email/records?project_id=23618"))
+            post(urlEqualTo("/fake/mail-sender"))
                 .withHeader("x-api-testing-key", equalTo("test-api-key"))
                 .willReturn(
                     okJson(
                         """
                          {
-                           "data": {
-                             "id": "979f88cd-acfc-41f1-b5d9-e391363baec6",
-                             "collection_id": "48c4c730-7a2a-4dd0-a645-e0291b472938",
-                             "project_id": 23618,
-                             "app_user_id": null,
-                             "created_by": 117429,
-                             "created_at": "2026-05-21T11:01:10.057Z",
-                             "updated_at": "2026-05-21T11:01:10.057Z",
-                             "deleted_at": null,
-                             "data": {
-                               "key": "value"
-                             }
-                           }
+                           "status": "OK"
                          }
                         """
                     )
@@ -76,18 +63,14 @@ class MailSenderRestClientItTest {
         );
 
         // when
-        final var response = mailSenderRestClient.sendEmail();
+        final var response = mailSenderRestClient.sendEmail(
+                new MailSendingClientRequestDto("from@example", "to@example.com", "title", "content"));
 
         // then
-        assertThat(response.data()).isNotNull();
-        assertThat(response.data())
-            .satisfies(sendingResult -> {
-                assertThat(sendingResult.id()).isEqualTo(UUID.fromString("979f88cd-acfc-41f1-b5d9-e391363baec6"));
-                assertThat(sendingResult.collectionId()).isEqualTo(UUID.fromString("48c4c730-7a2a-4dd0-a645-e0291b472938"));
-            });
+        assertThat(response.status()).isEqualTo("OK");
 
         wireMockServer.verify(
-            getRequestedFor(urlEqualTo("/api/collections/send-email/records?project_id=23618"))
+            getRequestedFor(urlEqualTo("/fake/mail-sender"))
                 .withHeader("x-api-testing-key", equalTo("test-api-key"))
         );
     }
