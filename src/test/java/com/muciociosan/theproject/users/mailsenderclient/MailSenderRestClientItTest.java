@@ -41,12 +41,12 @@ class MailSenderRestClientItTest {
     @AfterAll
     static void stopWireMock() {
         wireMockServer.stop();
-        System.clearProperty("test.mailsender.url");
+        System.clearProperty("theproject.ittest.mailsender.url");
     }
 
     @Test
-    @DisplayName("should fetch user data from external service")
-    void shouldFetchUserDataFromExternalService() {
+    @DisplayName("should send email request to external service")
+    void shouldSendEmailRequestToExternalService() {
         // given
         wireMockServer.stubFor(
             post(urlEqualTo("/fake/mail-sender"))
@@ -70,7 +70,7 @@ class MailSenderRestClientItTest {
         assertThat(response.status()).isEqualTo("OK");
 
         wireMockServer.verify(
-            getRequestedFor(urlEqualTo("/fake/mail-sender"))
+            postRequestedFor(urlEqualTo("/fake/mail-sender"))
                 .withHeader("x-api-testing-key", equalTo("test-api-key"))
         );
     }
