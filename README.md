@@ -1,17 +1,19 @@
 # The Project
 
-Showcase Spring Boot application focused on a modular monolith style, spec-first REST API design, and a small but explicit user registration flow.
+Showcase Spring Boot application focused on a modular monolith style, spec-first REST API design, and explicit module boundaries.
 
-The main business scenario implemented today is user registration. Registering a user also starts an email verification flow through a dedicated mailing adapter.
+The current business flow centers on user registration and user email management. Registering a user starts an email verification flow through a dedicated mailing adapter, and the API also exposes read and update operations for existing users.
 
 ## Tech stack
 
 - Java 25
-- Spring Boot 4.0
+- Spring Boot 4.0.6
 - Spring Modulith
 - H2 in-memory database
 - Liquibase
 - OpenAPI Generator
+- Spring Security
+- Springdoc OpenAPI UI
 - JUnit 5
 - WireMock
 
@@ -21,14 +23,15 @@ The main business scenario implemented today is user registration. Registering a
 - Clear separation between functional modules and technical modules
 - Spec-first REST API generation from OpenAPI files
 - Database migrations managed with Liquibase
+- Spring REST client integration for the mail sender adapter
 - Architecture verification with Spring Modulith and ArchUnit
-- Integration testing of module behavior and external adapters
+- Integration and end-to-end style testing of module behavior and external adapters
 
 ## Project layout
 
 Main code lives under `src/main/java/com/muciociosan/theproject`.
 
-- `applicationlogic` - application processes and orchestration, including user registration and user archiving
+- `applicationlogic` - application processes and orchestration, including user registration, user updates, email verification, and archiving placeholders
 - `users` - user domain, use cases, internal persistence, and domain events
 - `adapters` - secondary adapters, currently including the mail sender client
 - `infrastructure` - runtime and web concerns such as security and exception handling
@@ -52,7 +55,7 @@ Two ADRs are a good starting point:
 
 For architecture verification, see [ApplicationModulesItTest](/Users/muciu/projects/maj-2026-interview/theproject/src/test/java/com/muciociosan/theproject/ApplicationModulesItTest.java).
 
-## Main use case
+## Main flows
 
 The central flow is `UserRegistrationProcess`, implemented in [UserRegistrationProcess.java](/Users/muciu/projects/maj-2026-interview/theproject/src/main/java/com/muciociosan/theproject/applicationlogic/userregistration/UserRegistrationProcess.java).
 
@@ -65,6 +68,12 @@ At a high level, the flow:
 
 An integration-level view of this behavior is covered by [UserRegistrationProcessItTest.java](/Users/muciu/projects/maj-2026-interview/theproject/src/test/java/com/muciociosan/theproject/applicationlogic/userregistration/UserRegistrationProcessItTest.java).
 
+The codebase also includes:
+
+1. reading an existing user by id,
+2. updating the current user email,
+3. a fake mail sender endpoint used as a local test double for the outbound adapter.
+
 ## API
 
 The application exposes a spec-first REST API. The source contract lives in:
@@ -72,6 +81,8 @@ The application exposes a spec-first REST API. The source contract lives in:
 - [src/main/resources/openapi.yaml](/Users/muciu/projects/maj-2026-interview/theproject/src/main/resources/openapi.yaml)
 - [src/main/resources/openapi/system-status.api.yaml](/Users/muciu/projects/maj-2026-interview/theproject/src/main/resources/openapi/system-status.api.yaml)
 - [src/main/resources/openapi/user-registration.api.yaml](/Users/muciu/projects/maj-2026-interview/theproject/src/main/resources/openapi/user-registration.api.yaml)
+- [src/main/resources/openapi/users.api.yaml](/Users/muciu/projects/maj-2026-interview/theproject/src/main/resources/openapi/users.api.yaml)
+- [src/main/resources/openapi/fake-mail-sender.api.yaml](/Users/muciu/projects/maj-2026-interview/theproject/src/main/resources/openapi/fake-mail-sender.api.yaml)
 
 Generated interfaces are added during the Gradle build and compiled from `build/generated/sources/openapi`.
 
@@ -79,8 +90,13 @@ Currently exposed endpoints:
 
 - `GET /api/v1/system/status`
 - `POST /api/v1/user-registration`
+- `GET /api/v1/users/{userId}`
+- `PUT /api/v1/users/{userId}`
+- `POST /fake/mail-sender`
 
 Example requests are available in [docs/requests.rest](/Users/muciu/projects/maj-2026-interview/theproject/docs/requests.rest).
+
+Swagger UI is available locally at `http://localhost:8081/swagger-ui.html`.
 
 ## Running locally
 
@@ -108,6 +124,12 @@ Once running, try:
 
 - `GET http://localhost:8081/api/v1/system/status`
 - `POST http://localhost:8081/api/v1/user-registration`
+- `GET http://localhost:8081/api/v1/users/{userId}`
+- `PUT http://localhost:8081/api/v1/users/{userId}`
+- `POST http://localhost:8081/fake/mail-sender`
+- `http://localhost:8081/swagger-ui.html`
+
+The default mail sender client configuration also points at the same local application instance, so the fake mail sender endpoint can be used as a safe local stub during development.
 
 ## Database migrations
 
@@ -120,20 +142,21 @@ The project follows explicit migration conventions, including zero-padded numeri
 
 ## Testing approach
 
-The test suite combines several layers:
+The test suite currently combines several layers:
 
 - unit tests for value objects and domain behavior
-- integration tests for application flows and adapters
+- integration tests for application flows, controllers, and adapters
+- end-to-end style registration flow coverage against the application context
 - architecture tests for module boundaries and package access
 
-Integration tests use Spring Boot and mock external services instead of calling the network directly.
+Integration tests use Spring Boot. The outbound mail sender adapter is covered with WireMock-based tests, while local application flows use the fake endpoint or application context wiring instead of real external calls.
 
-## Current gaps
+## Current status and gaps
 
 The codebase is intentionally incomplete in a few areas:
 
-- no every Controller is covered with MockMVC tests
-- domain events are present but not fully finished (should be triggered after transaction commit)
-- Outbox Pattern be implemented for sending emails to not-block main transaction
-- the mail sender integration does not yet include resilience concerns
-- test coverage can be expanded further
+- user archiving exists only as a placeholder process and scheduled job shell
+- domain events are present but not yet wired to a completed after-transaction publication flow
+- the outbound mail sender adapter still lacks retries and broader resilience handling
+- email validation and verification metadata are still minimal in the domain model
+- test coverage is solid around the main flows, but can still be expanded for the remaining edge cases and unfinished features
