@@ -20,8 +20,8 @@ spring:
 theproject:
   clients:
     mailsender:
-      # Purposely set to fake to avoid case when test environment we call the external service
-      url: https://example.invalid.localhost
+      # Purposely such URLs should be faked in default properties to avoid case when test environment we call the external service
+      url: http://localhost:8081
       apiKey: change-me
       apiKeyHeaderName: x-api-key
       requestTimeout: 5s

@@ -1,4 +1,4 @@
-@userId = 11111111-1111-1111-1111-111111111111
+@userId = f643a0d7-6258-4ff0-a8cd-887d221b499e
 ###
 GET http://localhost:8081/api/v1/system/status
 

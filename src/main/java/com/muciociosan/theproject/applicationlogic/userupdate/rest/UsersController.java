@@ -30,7 +30,7 @@ class UsersController implements UsersApi {
     public ResponseEntity<GetUser200Response> getUser(UUID userId) {
         final var user = usersLookup.getUser(UserId.from(userId));
 
-        return UsersApi.super.getUser(userId);
+        return ResponseEntity.ok(toDto(user));
     }
 
     private GetUser200Response toDto(final UserView user) {
