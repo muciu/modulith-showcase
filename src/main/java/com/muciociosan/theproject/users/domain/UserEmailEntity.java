@@ -1,6 +1,7 @@
 package com.muciociosan.theproject.users.domain;
 
 
+import com.muciociosan.theproject.shared.exceptions.InvalidStateException;
 import com.muciociosan.theproject.shared.exceptions.ValidationException;
 import com.muciociosan.theproject.users.usecases.EmailValue;
 import com.muciociosan.theproject.users.view.UserEmailView;
@@ -78,6 +79,13 @@ public class UserEmailEntity {
 
     public boolean current() {
         return current;
+    }
+
+    void unmarkCurrent() {
+        if (!this.current) {
+            throw new InvalidStateException("Email is not current!");
+        }
+        this.current = false;
     }
 
     public Instant createdAt() {

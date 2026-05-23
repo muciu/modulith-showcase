@@ -115,7 +115,9 @@ public class UserAggregate {
                 .filter(email -> email.email().equals(emailValue))
                 .filter(email -> email.verificationStatus() == VERIFICATION_STARTED)
                 .findFirst().orElseThrow(() -> new InvalidStateException("No email to verify"));
-        toMark.markVerified();// this should fail because we have constraint
+        this.emails.stream().filter(UserEmailEntity::current)
+                .forEach(UserEmailEntity::unmarkCurrent);
+        toMark.markVerified();
     }
 
     // ------ INTERNAL methods goes below

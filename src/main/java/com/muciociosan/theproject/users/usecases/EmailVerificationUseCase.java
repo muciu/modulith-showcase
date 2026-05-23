@@ -2,6 +2,7 @@ package com.muciociosan.theproject.users.usecases;
 
 import com.muciociosan.theproject.shared.ids.UserId;
 import com.muciociosan.theproject.users.domain.DomainEventsPublisher;
+import com.muciociosan.theproject.users.domain.UserAggregate;
 import com.muciociosan.theproject.users.domain.UserAggregateRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,18 @@ public class EmailVerificationUseCase {
     public void markVerificationStarted(final UserId userId, final EmailValue newEmail) {
         final var user = userRepository.getBy(userId);
         user.emailVerificationStarted(newEmail);
-        final var events = userRepository.save(user);
+        saveAndPublishEvents(user);
+    }
+
+    @Transactional
+    public void verificationCompleted(final UserId userId, final EmailValue emailValue) {
+        final var user = userRepository.getBy(userId);
+        user.markEmailVerified(emailValue);
+        saveAndPublishEvents(user);
+    }
+
+    private void saveAndPublishEvents(final UserAggregate userAggregate) {
+        final var events = userRepository.save(userAggregate);
         eventsPublisher.publishFrom(events);
     }
 }

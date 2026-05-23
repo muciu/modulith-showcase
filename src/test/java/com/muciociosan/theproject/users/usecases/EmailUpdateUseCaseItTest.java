@@ -47,6 +47,8 @@ class EmailUpdateUseCaseItTest {
             assertThat(email.email().equals(EmailValue.from(initialEmail)));
             assertThat(email.isVerified()).isFalse();
         });
+
+        // when
         final var emailRows = jdbcTemplate.queryForObject(
                 """
                 SELECT COUNT(*)

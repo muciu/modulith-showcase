@@ -132,7 +132,8 @@ Integration tests use Spring Boot and mock external services instead of calling 
 
 The codebase is intentionally incomplete in a few areas:
 
-- no MockMvc coverage for the exposed REST API yet
-- domain events are present but not fully finished
+- no every Controller is covered with MockMVC tests
+- domain events are present but not fully finished (should be triggered after transaction commit)
+- Outbox Pattern be implemented for sending emails to not-block main transaction
 - the mail sender integration does not yet include resilience concerns
 - test coverage can be expanded further

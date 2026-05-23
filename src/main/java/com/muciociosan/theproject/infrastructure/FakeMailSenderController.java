@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FakeMailSenderController implements FakeMailSenderApi {
     @Override
     public ResponseEntity<SendEmail200Response> sendEmail(SendEmailRequest sendEmailRequest) {
-        return ResponseEntity.ok(new SendEmail200Response().status("OK"));
+        final var status = sendEmailRequest.getTo().startsWith("sending-failure") ? "FAILED" : "OK";
+        return ResponseEntity.ok(new SendEmail200Response().status(status));
     }
 }
